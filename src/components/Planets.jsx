@@ -1,16 +1,16 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 import Planet from "./Planet";
 
-const fetchPlanets = async (key, greeting, page) => {
-  console.log(greeting);
-  const res = await fetch(`http://swapi.dev/api/planets/?page=${page}`);
-  return res.json();
+const fetchPlanets = async (key) => {
+  const { data } = await axios.get(`http://swapi.dev/api/planets/`);
+  return data;
 };
 
 const Planets = () => {
-  const [page, setPage] = useState(1);
-  const { data, status } = useQuery(["planets", "hello", page], fetchPlanets);
+  const [page, setPage] = useState(2);
+  const { resolveData, status } = useQuery(["planets"], fetchPlanets);
 
   return (
     <div>
@@ -24,7 +24,7 @@ const Planets = () => {
       {status === "error" && <div>Error fetching data</div>}
       {status === "success" && (
         <div>
-          {data.results.map((planet) => (
+          {resolveData.results.map((planet) => (
             <Planet key={planet.name} planet={planet} />
           ))}
         </div>
